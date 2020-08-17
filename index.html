@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    .red {
+        border: 2px solid red;
+    }
+
+    .green {
+        border: 2px solid green;
+    }
+</style>
+<body>
+
+    <div id="root">
+        <!-- variable -->        
+        <h1>{{ greeting }}</h1>
+        <input type="text" v-model="greeting">
+
+        <!-- if vue -->
+        <p v-if="greeting == 'Hello Vue'">True Vue</p>
+        <p v-else-if="greeting == 'Hello World'">True World</p>
+        <p v-else>False</p>
+
+        <!-- v-once will not work like v-model where the variable will be render once and not update if there is change -->
+        <p v-once>v-once : {{ greeting }}</p>
+
+        <!-- show and hide -->
+        <p v-show="greeting == 'Hello Vue'">v-show {{ greeting }}</p>
+        
+        <!-- to prin text v-text="msg" -->
+        <!-- this example will print text in html as regular {{ variable }} -->
+        <p v-text="'v-text : ' + greeting"></p>
+        
+        <!-- v-html="html" can print html tag -->
+        <p v-html="'<h1>' + 'v-html : ' + greeting + '</h1>'"></p>
+        
+        <!-- bind html into js -->
+        <!-- this example show html attribute disable if variable email is less than 5 characther -->
+        <!-- can be use like this v-bind:attribute or shortform will be :attribute -->
+        <!-- other that html attribute vbind also can bind css class -->
+        <!-- for single condition example :class="{classname: condition}" -->
+        <input type="email" v-model="email" :class="[email.length > 5 ? 'green' : 'red']">
+        <button onclick="alert('logged in')" :disabled="email < 5">Sign In</button>
+
+        <!-- for loop -->
+        <!-- array -->
+        <hr>
+        <h2>{{ "v-for loop array example" | capitalize }}</h2>
+        <!-- example of v-on:event="handle" and the shotform is @ -->
+        <input type="text" placeholder="enter new cat" v-model="newCat" @keyup.enter="addNewCat">
+        <button @click="addNewCat">+ Add</button>
+        <ul>
+            <p>cat name</p>
+            <li v-for="cat in cats">{{ cat }}</li>
+        </ul>
+        <hr>
+        {{ helloCat | capitalize }}
+        <br>
+        <!-- object -->
+        <hr>
+        <h2>v-for loop object</h2>
+        <input type="text" placeholder="enter new skater" v-model="newSkater" @keyup.enter="addNewSkater">
+        <button @click="addNewSkater">+ Add</button>
+        <ul>
+            <p>skater name</p>
+            <!-- for adding second filter just add another | functionName -->
+            <li v-for="skater in skaters">{{ skater.name | capitalize }}</li>
+        </ul>
+        
+        <!-- component example -->
+        <!-- just call the declared name no need for tag closure -->
+        <!-- if there is any variable need to pass just add v-bind:variableNameUsedInComponent="variableName" -->
+        <hr>
+        <h2>Component example</h2>
+        <cat-list :cats="cats"/>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script>
+        //act as resuble component
+        Vue.component('cat-list', {
+
+            //if component is receiving any variable it need to be declare here
+            props: [
+                'cats',
+            ],
+
+            // the html that will render at browser
+            template: 
+            '<ul><li v-for="cat in cats">{{ cat }}</li></ul>'
+        })
+
+        app = new Vue({
+            //id element that will attach to all this function
+            el : '#root',
+
+            component: [
+                'cat-list'
+            ],
+            
+            // declare variable
+            data : {
+                greeting: 'Hello Vue',
+                email: '',
+                cats: [
+                    'mok',
+                    'itam',
+                    'belang',
+                    'oyen',
+                    'hemo',
+                ],
+                skaters: [
+                    {name : 'tony hawk'},
+                    {name : 'paul rodriguez'},
+                    {name : 'nyjah huston'},
+                    {name : 'shane oniel'},
+                    {name : 'yuto horigome'},
+                ],
+                newCat: '',
+                newSkater: ''
+
+            },
+
+            //method can trigger and accept function
+            methods: {
+                addNewCat() {
+                    this.cats.push(this.newCat);
+                    this.newCat = "";
+                },
+
+                addNewSkater() {
+                    this.skaters.push(
+                        {name : this.newSkater}
+                    )
+                    this.newSkater = "";
+                }
+            },
+
+            // function that can accept value to automate without event trigger it
+            filters: {
+                capitalize(value) {
+                    return value.toUpperCase();
+                }
+            },
+
+            // to automate without any input or event trigger
+            computed: {
+                helloCat() {
+                    return "i am computed function example = " + this.greeting + this.newCat;
+                }
+            },
+
+
+            // all of this show application life cycle status
+            created() {
+                console.log("created");
+            },
+
+            mounted() {
+                console.log("mounted");
+            },
+
+
+            updated() {
+                console.log("updated");
+            },
+
+            destroyed() {
+                console.log("destroyed");
+            },
+        })
+    </script>
+</body>
+</html>
